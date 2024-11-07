@@ -28,16 +28,20 @@ export default function MyApp() {
 
   const [showFirstPage, setShowFirstPage] = useState(true);
 
+  const [showRegister, setShowRegister] = useState(false);
+
 
   function runShowLogin(){
 
  
 
-      setShowFirstPage(false)
+      setShowFirstPage(false);
 
       setShowLogin(true);
 
-      setShowDash(false)
+      setShowDash(false);
+
+      setShowRegister(false);
 
   }
 
@@ -48,7 +52,10 @@ export default function MyApp() {
 
     setShowLogin(false);
 
-    setShowDash(true)
+    setShowDash(true);
+
+    setShowRegister(false);
+
 
    
 
@@ -61,12 +68,19 @@ function runShowFirst(){
 
   setShowLogin(false);
 
-  setShowDash(false)
+  setShowDash(false);
 
- 
+  setShowRegister(false);
+
 
 }
 
+  function runShowRegister() {
+  setShowFirstPage(false);
+  setShowLogin(false);
+  setShowDash(false);
+  setShowRegister(true);
+}
 
   return (
 
@@ -108,6 +122,8 @@ function runShowFirst(){
 
           <Button color="inherit" onClick={runShowDash}>Dashboard</Button>
 
+          <Button color="inherit" onClick={runShowRegister}>Register</Button>
+          
         </Toolbar>
 
       </AppBar>
@@ -159,27 +175,12 @@ function runShowFirst(){
           </Box>
 
       }
-  {showRegister &&
-
-  <Box component="section" sx={{ p: 2, border: '1px dashed grey'}}>
-
-
-
- Welcome to the register page
-
-</Box>
-
-}
-
-
+  
+    {showRegister && (
+        <Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
+          This is the registration page
+        </Box>
+      )}
     </Box>
-
-
-   
-
-
-   
-
   );
-
 }
