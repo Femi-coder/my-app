@@ -159,7 +159,17 @@ function runShowFirst(){
           </Box>
 
       }
+  {showRegister &&
 
+  <Box component="section" sx={{ p: 2, border: '1px dashed grey'}}>
+
+
+
+ Welcome to the register page
+
+</Box>
+
+}
 
 
     </Box>
