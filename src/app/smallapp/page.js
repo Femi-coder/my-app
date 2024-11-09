@@ -6,9 +6,17 @@ import AppBar from '@mui/material/AppBar';
 
 import Box from '@mui/material/Box';
 
-import Toolbar from '@mui/material/Toolbar';
+import FormControl from '@mui/joy/FormControl';
 
-import Typography from '@mui/material/Typography';
+import FormLabel from '@mui/joy/FormLabel';
+
+import Input from '@mui/joy/Input';
+
+import Typography from '@mui/joy/Typography';
+
+
+
+import Toolbar from '@mui/material/Toolbar';
 
 import Button from '@mui/material/Button';
 
@@ -16,7 +24,8 @@ import IconButton from '@mui/material/IconButton';
 
 import MenuIcon from '@mui/icons-material/Menu';
 
-import {useState} from 'react';
+
+import { useState } from 'react';
 
 
 export default function MyApp() {
@@ -31,22 +40,22 @@ export default function MyApp() {
   const [showRegister, setShowRegister] = useState(false);
 
 
-  function runShowLogin(){
+  function runShowLogin() {
 
- 
 
-      setShowFirstPage(false);
 
-      setShowLogin(true);
+    setShowFirstPage(false);
 
-      setShowDash(false);
+    setShowLogin(true);
 
-      setShowRegister(false);
+    setShowDash(false);
+
+    setShowRegister(false);
 
   }
 
 
-  function runShowDash(){
+  function runShowDash() {
 
     setShowFirstPage(false);
 
@@ -57,34 +66,34 @@ export default function MyApp() {
     setShowRegister(false);
 
 
-   
-
-}
 
 
-function runShowFirst(){
-
-  setShowFirstPage(true);
-
-  setShowLogin(false);
-
-  setShowDash(false);
-
-  setShowRegister(false);
+  }
 
 
-}
+  function runShowFirst() {
+
+    setShowFirstPage(true);
+
+    setShowLogin(false);
+
+    setShowDash(false);
+
+    setShowRegister(false);
+
+
+  }
 
   function runShowRegister() {
-  setShowFirstPage(false);
-  setShowLogin(false);
-  setShowDash(false);
-  setShowRegister(true);
-}
+    setShowFirstPage(false);
+    setShowLogin(false);
+    setShowDash(false);
+    setShowRegister(true);
+  }
 
   return (
 
-   
+
 
     <Box sx={{ flexGrow: 1 }}>
 
@@ -110,9 +119,10 @@ function runShowFirst(){
 
           </IconButton>
 
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
 
-            MyProjectApp
+          <Typography variant="h2" component="div" sx={{ flexGrow: 1 }}>
+
+            Krispy Kreme
 
           </Typography>
 
@@ -123,7 +133,7 @@ function runShowFirst(){
           <Button color="inherit" onClick={runShowDash}>Dashboard</Button>
 
           <Button color="inherit" onClick={runShowRegister}>Register</Button>
-          
+
         </Toolbar>
 
       </AppBar>
@@ -132,17 +142,15 @@ function runShowFirst(){
 
       {showFirstPage &&
 
-      <Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
+        <Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
 
-   
+          Indulge in the sweet world of Krispy Kreme, where every doughnut is crafted to perfection. Our app is designed to make it easier
+          than ever for you to browse our delicious range, from classic Original Glazed to seasonal specials. Whether you're craving a quick treat or planning a celebration
+          , Krispy Kreme is here to sweeten your day.
 
-        This is a very basic application. This has a bar across the top and this box!
 
-        How this apps work is by creating two boxes. They are hidden in the background of the page.
 
-        It is only when a user clicks one of the buttons, we change the "state" from hidden (false) to show (true)
-
-      </Box>
+        </Box>
 
       }
 
@@ -151,32 +159,48 @@ function runShowFirst(){
 
       {showLogin &&
 
-          <Box component="section" sx={{ p: 2, border: '1px dashed grey'}}>
+        <Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
 
-     
 
-          This is my login page
+          <FormControl>
+            <FormLabel>Email</FormLabel>
+            <Input
+              // html input attribute
+              name="email"
+              type="email"
+              placeholder="johndoe@email.com"
+            />
+          </FormControl>
+          <FormControl>
+            <FormLabel>Password</FormLabel>
+            <Input
+              name="password"
+              type="password"
+              placeholder="password"
+            />
+          </FormControl>
 
-          </Box>
+
+        </Box>
 
       }
 
 
 
 
-    {showDash &&
+      {showDash &&
 
-          <Box component="section" sx={{ p: 2, border: '1px dashed grey'}}>
+        <Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
 
-     
 
-           Welcome to the dashboard page
 
-          </Box>
+          Welcome to the dashboard page
+
+        </Box>
 
       }
-  
-    {showRegister && (
+
+      {showRegister && (
         <Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
           This is the registration page
         </Box>
