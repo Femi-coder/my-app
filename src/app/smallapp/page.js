@@ -24,6 +24,9 @@ import IconButton from '@mui/material/IconButton';
 
 import MenuIcon from '@mui/icons-material/Menu';
 
+import StandardImageList from './projectimages';
+
+
 
 import { useState } from 'react';
 
@@ -147,7 +150,7 @@ export default function MyApp() {
           Indulge in the sweet world of Krispy Kreme, where every doughnut is crafted to perfection. Our app is designed to make it easier
           than ever for you to browse our delicious range, from classic Original Glazed to seasonal specials. Whether you're craving a quick treat or planning a celebration
           , Krispy Kreme is here to sweeten your day.
-
+          <StandardImageList />
 
 
         </Box>
