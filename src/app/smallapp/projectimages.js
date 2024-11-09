@@ -4,7 +4,7 @@ import ImageListItem from '@mui/material/ImageListItem';
 
 export default function StandardImageList() {
     return (
-        <ImageList sx={{ width: 500, height: 450 }} cols={3} rowHeight={164}>
+        <ImageList sx={{ width: 1000, height: 700 }} cols={3} rowHeight={180}>
             {itemData.map((item) => (
                 <ImageListItem key={item.img}>
                     <img
@@ -21,23 +21,12 @@ export default function StandardImageList() {
 
 const itemData = [
     {
-        img: 'https://images.unsplash.com/photo-1551963831-b3b1ca40c98e',
-        title: 'Breakfast',
-    },
-    {
-        img: 'https://images.unsplash.com/photo-1551782450-a2132b4ba21d',
-        title: 'Burger',
-    },
-    {
-        img: 'https://images.unsplash.com/photo-1522770179533-24471fcdba45',
-        title: 'Camera',
-    },
-    {
-        img: 'https://images.unsplash.com/photo-1444418776041-9c7e33cc5a9c',
+        img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Krispy_Kreme_Cannington%2C_April_2022.jpg/330px-Krispy_Kreme_Cannington%2C_April_2022.jpg',
         title: 'Coffee',
     },
     {
-        img: 'https://images.unsplash.com/photo-1533827432537-70133748f5c8',
-        title: 'Hats',
+        img: 'https://www.liverpool-one.com/wp-content/uploads/2021/10/Krispy-Kreme-Liverpool-ONE.jpg',
+        title: 'Doughnut',
+
     },
 ];

@@ -93,14 +93,13 @@ export default function MyApp() {
     setShowDash(false);
     setShowRegister(true);
   }
+  function handleRegister() {
+    console.log("Registration submitted");
+  }
 
   return (
-
-
-
-    <Box sx={{ flexGrow: 1 }}>
-
-      <AppBar position="static">
+    <Box sx={{ flexGrow: 1, backgroundColor: '#2E3B4E', color: 'lightgreen', minHeight: '100vh' }}>
+      <AppBar position="static" sx={{ backgroundColor: 'lightgreen' }}>
 
         <Toolbar>
 
@@ -129,13 +128,13 @@ export default function MyApp() {
 
           </Typography>
 
-          <Button color="inherit" onClick={runShowFirst}>First</Button>
+          <Button color="inherit" onClick={runShowFirst}>Index</Button>
+
+          <Button color="inherit" onClick={runShowRegister}>Register</Button>
 
           <Button color="inherit" onClick={runShowLogin}>Login</Button>
 
           <Button color="inherit" onClick={runShowDash}>Dashboard</Button>
-
-          <Button color="inherit" onClick={runShowRegister}>Register</Button>
 
         </Toolbar>
 
@@ -145,8 +144,9 @@ export default function MyApp() {
 
       {showFirstPage &&
 
-        <Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
-
+        <Box component="section" sx={{ p: 3, border: '1px dark blue' }}>
+          <h1 color='red'>Welcome to Krispy Kreme</h1>
+          <br></br>
           Indulge in the sweet world of Krispy Kreme, where every doughnut is crafted to perfection. Our app is designed to make it easier
           than ever for you to browse our delicious range, from classic Original Glazed to seasonal specials. Whether you're craving a quick treat or planning a celebration
           , Krispy Kreme is here to sweeten your day.
@@ -164,11 +164,10 @@ export default function MyApp() {
 
         <Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
 
-
+          <h1>Login</h1>
           <FormControl>
             <FormLabel>Email</FormLabel>
             <Input
-              // html input attribute
               name="email"
               type="email"
               placeholder="johndoe@email.com"
@@ -205,7 +204,54 @@ export default function MyApp() {
 
       {showRegister && (
         <Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
-          This is the registration page
+          <h1>Get Started</h1>
+
+          <FormControl>
+            <FormLabel>Name</FormLabel>
+            <Input
+              name="Full Name"
+              type="text"
+
+            />
+            <FormControl>
+              <FormLabel>Address</FormLabel>
+              <Input
+                name="address"
+                type="text"
+              />
+              <FormControl>
+                <FormLabel>Email</FormLabel>
+                <Input
+                  name="email"
+                  type="emaiil"
+                />
+
+
+              </FormControl>
+              <FormControl>
+                <FormLabel>Password</FormLabel>
+                <Input
+                  name="password"
+                  type="password"
+                />
+              </FormControl>
+              <FormControl>
+                <FormLabel> Confirm Password</FormLabel>
+                <Input
+                  name="confirm-passoword"
+                  type="password"
+                />
+              </FormControl>
+            </FormControl>
+          </FormControl>
+          <Button
+            variant="contained"
+            color="primary"
+            sx={{ mt: 3 }}
+            onClick={handleRegister}
+          >
+            Register
+          </Button>
         </Box>
       )}
     </Box>
