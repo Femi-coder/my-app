@@ -1,11 +1,12 @@
+import { MongoClient } from 'mongodb';
+
 export async function GET(req, res) {
     // Make a note we are on
     // the api. This goes to the console.
     console.log("in the api page")
     // =================================================
-    const { MongoClient } = require('mongodb');
-    const url = 'mongodb://root:example@localhost:27017/';
-    const client = new MongoClient(url);
+    const uri = 'mongodb+srv://Femi:password12345@krispykreme.zpsyu.mongodb.net/?retryWrites=true&w=majority&appName=KrispyKreme';
+    const client = new MongoClient(uri);
     const dbName = 'app'; // database name
     await client.connect();
     console.log('Connected successfully to server');
@@ -16,5 +17,4 @@ export async function GET(req, res) {
     //==========================================================
     // at the end of the process we need to send something back.
     return Response.json(findResult)
-    }
-    
+}

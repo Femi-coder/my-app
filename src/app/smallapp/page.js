@@ -102,7 +102,7 @@ export default function MyApp() {
 
   useEffect(() => {
     if (showDash) {
-      fetch('http://localhost:3000/api/getProducts')
+      fetch('/api/getProducts')
         .then((res) => res.json())
         .then((data) => {
           setProducts(data);
