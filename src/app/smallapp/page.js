@@ -28,7 +28,7 @@ import StandardImageList from './projectimages';
 
 
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 
 export default function MyApp() {
@@ -41,6 +41,9 @@ export default function MyApp() {
   const [showFirstPage, setShowFirstPage] = useState(true);
 
   const [showRegister, setShowRegister] = useState(false);
+
+  const [products, setProducts] = useState(null);
+
 
 
   function runShowLogin() {
@@ -96,6 +99,17 @@ export default function MyApp() {
   function handleRegister() {
     console.log("Registration submitted");
   }
+
+  useEffect(() => {
+    if (showDash) {
+      fetch('http://localhost:3000/api/getProducts')
+        .then((res) => res.json())
+        .then((data) => {
+          setProducts(data);
+        })
+        .catch((error) => console.error('Error fetching products:', error));
+    }
+  }, [showDash]);
 
   return (
     <Box sx={{ flexGrow: 1, backgroundColor: '#2E3B4E', color: 'lightgreen', minHeight: '100vh' }}>
@@ -190,17 +204,26 @@ export default function MyApp() {
 
 
 
-      {showDash &&
+      {showDash && (
 
         <Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
-
-
-
-          Welcome to the dashboard page
-
+          <h1>Dashboard</h1>
+          {products ? (
+            <Box>
+              {products.map((product, index) => (
+                <Box key={index} sx={{ p: 2, border: '1px solid grey', borderRadius: '8px', mb: 2 }}>
+                  <Typography variant="h6">Product Name: {product.pname}</Typography>
+                  <Typography variant="body1">Price: ${product.price}</Typography>
+                  <Typography variant="body2">Product ID: {product._id}</Typography>
+                  <Button variant="outlined" sx={{ mt: 1 }}>Add to Cart</Button>
+                </Box>
+              ))}
+            </Box>
+          ) : (
+            <p>Loading products...</p>
+          )}
         </Box>
-
-      }
+      )}
 
       {showRegister && (
         <Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
