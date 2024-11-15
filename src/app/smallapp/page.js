@@ -99,6 +99,17 @@ export default function MyApp() {
   function handleRegister() {
     console.log("Registration submitted");
   }
+  function putInCart(pname) {
+
+
+    console.log("putting in cart: " + pname)
+
+
+    fetch("http://localhost:3000/api/putInCart?pname=" + pname);
+
+
+
+  }
 
   useEffect(() => {
     if (showDash) {
@@ -211,11 +222,11 @@ export default function MyApp() {
           {products ? (
             <Box>
               {products.map((product, index) => (
-                <Box key={index} sx={{ p: 2, border: '1px solid grey', borderRadius: '8px', mb: 2 }}>
+                <Box key={index} sx={{ p: 2, border: '1px solid white', borderRadius: '8px', mb: 2 }}>
                   <Typography variant="h6">Product Name: {product.pname}</Typography>
-                  <Typography variant="body1">Price: ${product.price}</Typography>
+                  <Typography variant="body1">Price: €{product.price}</Typography>
                   <Typography variant="body2">Product ID: {product._id}</Typography>
-                  <Button variant="outlined" sx={{ mt: 1 }}>Add to Cart</Button>
+                  <Button onClick={() => putInCart(product.pname)} variant="outlined"> Add to cart </Button>
                 </Box>
               ))}
             </Box>
