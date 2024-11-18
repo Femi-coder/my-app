@@ -132,6 +132,29 @@ export default function MyApp() {
 
 
   }
+  function handleLogin() {
+    const email = document.querySelector('input[name="email"]').value;
+    const password = document.querySelector('input[name="password"]').value;
+
+    // Send login credentials to the backend
+    fetch('/api/Login1', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.error) {
+          alert(data.error); // Show error message
+        } else {
+          alert('Login successful');
+          runShowDash(); // Redirect to the dashboard after successful login
+        }
+      })
+      .catch((error) => console.error('Error during login:', error));
+  }
 
   useEffect(() => {
     if (showDash) {
@@ -228,7 +251,14 @@ export default function MyApp() {
               placeholder="password"
             />
           </FormControl>
-
+          <Button
+            variant="contained"
+            color="primary"
+            sx={{ mt: 3 }}
+            onClick={handleLogin} // Call the login handler on button click
+          >
+            Login
+          </Button>
 
         </Box>
 
