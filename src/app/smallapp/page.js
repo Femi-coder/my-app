@@ -97,7 +97,29 @@ export default function MyApp() {
     setShowRegister(true);
   }
   function handleRegister() {
-    console.log("Registration submitted");
+    const name = document.querySelector('input[name="Full Name"]').value;
+    const address = document.querySelector('input[name="address"]').value;
+    const email = document.querySelector('input[name="email"]').value;
+    const password = document.querySelector('input[name="password"]').value;
+    const confirmPassword = document.querySelector('input[name="confirm-passoword"]').value;
+
+    // Send the data to the backend
+    fetch('/api/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ name, address, email, password, confirmPassword }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.error) {
+          alert(data.error); // Show error messages
+        } else {
+          alert('Registration successful');
+        }
+      })
+      .catch((error) => console.error('Error:', error));
   }
   function putInCart(pname) {
 
@@ -159,7 +181,7 @@ export default function MyApp() {
 
           <Button color="inherit" onClick={runShowLogin}>Login</Button>
 
-          <Button color="inherit" onClick={runShowDash}>Dashboard</Button>
+          <Button color="inherit" onClick={runShowDash}>Customer</Button>
 
         </Toolbar>
 
