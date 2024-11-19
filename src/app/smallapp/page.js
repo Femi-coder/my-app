@@ -33,7 +33,7 @@ import { useState, useEffect } from 'react';
 
 export default function MyApp() {
 
-
+  const [loggedIn, setLoggedIn] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
 
   const [showDash, setShowDash] = useState(false);
@@ -63,17 +63,16 @@ export default function MyApp() {
 
   function runShowDash() {
 
+    if (!loggedIn) {
+      alert("Please register or login to access the customer dashboard.");
+      runShowLogin(); // Redirect to Login
+      return;
+
+    }
     setShowFirstPage(false);
-
     setShowLogin(false);
-
     setShowDash(true);
-
     setShowRegister(false);
-
-
-
-
   }
 
 
@@ -95,6 +94,10 @@ export default function MyApp() {
     setShowLogin(false);
     setShowDash(false);
     setShowRegister(true);
+  }
+  function handleLogin() {
+    const email = document.querySelector('input[name="email"]').value;
+    const password = document.querySelector('input[name="password"]').value;
   }
   function handleRegister() {
     const name = document.querySelector('input[name="Full Name"]').value;
@@ -136,7 +139,7 @@ export default function MyApp() {
     const email = document.querySelector('input[name="email"]').value;
     const password = document.querySelector('input[name="password"]').value;
 
-    // Send login credentials to the backend
+    // Sends login credentials to the backend
     fetch('/api/Login1', {
       method: 'POST',
       headers: {
@@ -147,10 +150,11 @@ export default function MyApp() {
       .then((response) => response.json())
       .then((data) => {
         if (data.error) {
-          alert(data.error); // Show error message
+          alert(data.error);
         } else {
           alert('Login successful');
-          runShowDash(); // Redirect to the dashboard after successful login
+          setLoggedIn(true);
+          runShowDash(); // Redirects to the dashboard after successful login
         }
       })
       .catch((error) => console.error('Error during login:', error));
@@ -275,6 +279,17 @@ export default function MyApp() {
             <Box>
               {products.map((product, index) => (
                 <Box key={index} sx={{ p: 2, border: '1px solid white', borderRadius: '8px', mb: 2 }}>
+                  <img
+                    src={product.imageUrl}
+                    style={{
+                      width: '150px',
+                      height: '150px',
+                      objectFit: 'cover',
+                      borderRadius: '8px',
+                      marginRight: '16px'
+
+                    }}
+                  />
                   <Typography variant="h6">Product Name: {product.pname}</Typography>
                   <Typography variant="body1">Price: €{product.price}</Typography>
                   <Typography variant="body2">Product ID: {product._id}</Typography>
