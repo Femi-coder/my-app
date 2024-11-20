@@ -44,6 +44,10 @@ export default function MyApp() {
 
   const [products, setProducts] = useState(null);
 
+  const [showManager, setShowManager] = useState(false);
+
+  const [weather, setWeatherData] = useState(null);
+
 
 
   function runShowLogin() {
@@ -58,6 +62,8 @@ export default function MyApp() {
 
     setShowRegister(false);
 
+    setShowManager(false);
+
   }
 
 
@@ -65,7 +71,7 @@ export default function MyApp() {
 
     if (!loggedIn) {
       alert("Please register or login to access the customer dashboard.");
-      runShowLogin(); // Redirect to Login
+      runShowLogin(); // Redirects to Login
       return;
 
     }
@@ -73,6 +79,7 @@ export default function MyApp() {
     setShowLogin(false);
     setShowDash(true);
     setShowRegister(false);
+    setShowManager(false);
   }
 
 
@@ -86,6 +93,7 @@ export default function MyApp() {
 
     setShowRegister(false);
 
+    setShowManager(false);
 
   }
 
@@ -95,6 +103,15 @@ export default function MyApp() {
     setShowDash(false);
     setShowRegister(true);
   }
+
+  function runShowManager() {
+    setShowFirstPage(false);
+    setShowLogin(false);
+    setShowDash(false);
+    setShowRegister(false);
+    setShowManager(true);
+  }
+
   function handleLogin() {
     const email = document.querySelector('input[name="email"]').value;
     const password = document.querySelector('input[name="password"]').value;
@@ -105,6 +122,9 @@ export default function MyApp() {
     const email = document.querySelector('input[name="email"]').value;
     const password = document.querySelector('input[name="password"]').value;
     const confirmPassword = document.querySelector('input[name="confirm-passoword"]').value;
+
+
+
 
     // Send the data to the backend
     fetch('/api/register', {
@@ -117,12 +137,13 @@ export default function MyApp() {
       .then((response) => response.json())
       .then((data) => {
         if (data.error) {
-          alert(data.error); // Show error messages
+          alert(data.error);
         } else {
           alert('Registration successful');
         }
       })
       .catch((error) => console.error('Error:', error));
+
   }
   function putInCart(pname) {
 
@@ -168,6 +189,11 @@ export default function MyApp() {
           setProducts(data);
         })
         .catch((error) => console.error('Error fetching products:', error));
+
+      fetch('/api/getWeather')
+        .then((res) => res.json())
+        .then((data) => setWeatherData(data))
+        .catch((error) => console.error('Error fetching weather:', error));
     }
   }, [showDash]);
 
@@ -209,6 +235,9 @@ export default function MyApp() {
           <Button color="inherit" onClick={runShowLogin}>Login</Button>
 
           <Button color="inherit" onClick={runShowDash}>Customer</Button>
+
+          <Button color="inherit" onClick={runShowManager}>Manager</Button>
+
 
         </Toolbar>
 
@@ -275,6 +304,11 @@ export default function MyApp() {
 
         <Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
           <h1>Dashboard</h1>
+          {weather && (
+            <Typography>
+              Today's Temperature: {weather.temp}°C | {weather.condition}
+            </Typography>
+          )}
           {products ? (
             <Box>
               {products.map((product, index) => (
