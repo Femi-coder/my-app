@@ -40,7 +40,7 @@ export async function POST(req) {
         }
 
         // Respond with success
-        return new Response(JSON.stringify({ message: "Login successful" }), { status: 200 });
+        return new Response(JSON.stringify({ message: "Login successful", username: user.name }), { status: 200 });
     } catch (error) {
         console.error("Error in POST handler:", error);
         return new Response(JSON.stringify({ error: "Internal server error" }), { status: 500 });

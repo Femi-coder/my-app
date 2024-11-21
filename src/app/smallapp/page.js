@@ -48,6 +48,8 @@ export default function MyApp() {
 
   const [weather, setWeatherData] = useState(null);
 
+  const [username, setUsername] = useState('');
+
 
 
   function runShowLogin() {
@@ -145,17 +147,41 @@ export default function MyApp() {
       .catch((error) => console.error('Error:', error));
 
   }
-  function putInCart(pname) {
+  function putInCart(product) {
+    if (!username) {
+      alert("Please log in to add items to the cart.");
+      return;
+    }
 
+    if (!product.pname) {
+      alert("Product name is missing.");
+      return;
+    }
 
-    console.log("putting in cart: " + pname)
-
-
-    fetch("http://localhost:3000/api/putInCart?pname=" + pname);
-
-
-
+    fetch('/api/putInCart', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        pname: product.pname,
+        username: username, // Send the logged-in username
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.error) {
+          alert(data.error);
+        } else {
+          alert("Product added to cart!");
+        }
+      })
+      .catch((error) => {
+        console.error("Error adding to cart:", error);
+        alert("An error occurred while adding the product to the cart.");
+      });
   }
+
   function handleLogin() {
     const email = document.querySelector('input[name="email"]').value;
     const password = document.querySelector('input[name="password"]').value;
@@ -175,6 +201,7 @@ export default function MyApp() {
         } else {
           alert('Login successful');
           setLoggedIn(true);
+          setUsername(data.username);
           runShowDash(); // Redirects to the dashboard after successful login
         }
       })
@@ -301,11 +328,19 @@ export default function MyApp() {
 
 
       {showDash && (
-
         <Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
           <h1>Dashboard</h1>
+          {username ? (
+            <Typography variant="h5">
+              Welcome, {username}!
+            </Typography>
+          ) : (
+            <Typography variant="h5">
+              Welcome to the dashboard!
+            </Typography>
+          )}
           {weather && (
-            <Typography>
+            <Typography variant="h5">
               Today's Temperature: {weather.temp}°C | {weather.condition}
             </Typography>
           )}
@@ -327,7 +362,7 @@ export default function MyApp() {
                   <Typography variant="h6">Product Name: {product.pname}</Typography>
                   <Typography variant="body1">Price: €{product.price}</Typography>
                   <Typography variant="body2">Product ID: {product._id}</Typography>
-                  <Button onClick={() => putInCart(product.pname)} variant="outlined"> Add to cart </Button>
+                  <Button onClick={() => putInCart(product)} variant="outlined"> Add to cart </Button>
                 </Box>
               ))}
             </Box>
