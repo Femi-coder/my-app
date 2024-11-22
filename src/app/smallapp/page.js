@@ -82,16 +82,19 @@ export default function MyApp() {
   };
 
   const runShowDash = () => {
-    setShowFirstPage(false);
-    setShowLogin(false);
-    setShowDash(true);
-    setShowRegister(false);
-    setShowManager(false);
-    setShowCheckout(false);
+    if (!loggedIn) {
+      alert('Please log in to access the customer dashboard.');
+      runShowDash();
+      return;
+    } else {
+      setShowFirstPage(false);
+      setShowLogin(false);
+      setShowDash(true);
+      setShowRegister(false);
+      setShowManager(false);
+      setShowCheckout(false);
+    }
   };
-
-
-
 
   const runShowFirst = () => {
     setShowFirstPage(true);
@@ -173,7 +176,6 @@ export default function MyApp() {
         } else {
           setLoggedIn(true);
           setUsername(email);
-          setShowLogin(false);
           setShowDash(true);
         }
       })
@@ -365,7 +367,6 @@ export default function MyApp() {
           )}
         </Box>
       )}
-
       {showManager && !managerLoggedIn && (
         <Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
           <h1>Manager Login</h1>
@@ -383,12 +384,12 @@ export default function MyApp() {
         </Box>
       )}
 
-
       {showManager && managerLoggedIn && (
         <Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
           <h1>Manager Dashboard</h1>
           {orders && orders.length > 0 ? (
             <Box>
+              {/* List all orders */}
               {orders.map((order, index) => (
                 <Box
                   key={index}
@@ -408,6 +409,22 @@ export default function MyApp() {
                   </Typography>
                 </Box>
               ))}
+
+              {/* Total Orders and Revenue */}
+              <Box
+                sx={{
+                  mt: 3,
+                  p: 2,
+                  border: '1px solid lightgreen',
+                  backgroundColor: '#2E3B4E',
+                  borderRadius: '8px',
+                }}
+              >
+                <Typography variant="h5">Total Orders: {orders.length}</Typography>
+                <Typography variant="h5">
+                  Total Revenue: €{orders.reduce((sum, order) => sum + order.total, 0).toFixed(2)}
+                </Typography>
+              </Box>
             </Box>
           ) : (
             <Typography>No orders found.</Typography>
@@ -415,15 +432,14 @@ export default function MyApp() {
         </Box>
       )}
 
-
       {showCheckout && (
-        <Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
-          <h1>Checkout</h1>
+        <Box component="section" sx={{ p: 2 }}>
+          <Typography variant="h4">Checkout</Typography>
           {cart.length > 0 ? (
             cart.map((item, index) => (
               <Box key={index} sx={{ p: 2, border: '1px solid lightgreen', mb: 2 }}>
                 <Typography>Product Name: {item.pname}</Typography>
-                <Typography>Price: €{item.price}</Typography>
+                <Typography>Price: €{item.price.toFixed(2)}</Typography>
               </Box>
             ))
           ) : (
