@@ -21,21 +21,27 @@ export default function MyApp() {
   const [showFirstPage, setShowFirstPage] = useState(true);
   const [showRegister, setShowRegister] = useState(false);
   const [showManager, setShowManager] = useState(false);
+  const [showCheckout, setShowCheckout] = useState(false);
   const [products, setProducts] = useState(null);
   const [weather, setWeatherData] = useState(null);
   const [username, setUsername] = useState('');
+  const [managerLoggedIn, setManagerLoggedIn] = useState(false);
+  const [orders, setOrders] = useState(null);
+  const [cart, setCart] = useState([]); // Cart state for checkout
 
   // Check session on page load
   useEffect(() => {
-    fetch('/api/getSession')
+    fetch('/api/getData')
       .then((res) => res.json())
       .then((data) => {
         if (data.error) {
           console.log('No active session found');
-        } else {
+        } else if (data.role === 'manager') {
+          setManagerLoggedIn(true);
+          setUsername(data.email);
+        } else if (data.role === 'customer') {
           setLoggedIn(true);
           setUsername(data.email);
-          console.log('Session restored:', data);
         }
       })
       .catch((err) => console.error('Error checking session:', err));
@@ -45,9 +51,7 @@ export default function MyApp() {
     if (showDash) {
       fetch('/api/getProducts')
         .then((res) => res.json())
-        .then((data) => {
-          setProducts(data);
-        })
+        .then((data) => setProducts(data))
         .catch((error) => console.error('Error fetching products:', error));
 
       fetch('/api/getWeather')
@@ -63,6 +67,7 @@ export default function MyApp() {
     setShowDash(false);
     setShowRegister(false);
     setShowManager(false);
+    setShowCheckout(false);
   };
 
   const runShowDash = () => {
@@ -76,6 +81,7 @@ export default function MyApp() {
     setShowDash(true);
     setShowRegister(false);
     setShowManager(false);
+    setShowCheckout(false);
   };
 
   const runShowFirst = () => {
@@ -84,6 +90,7 @@ export default function MyApp() {
     setShowDash(false);
     setShowRegister(false);
     setShowManager(false);
+    setShowCheckout(false);
   };
 
   const runShowRegister = () => {
@@ -91,6 +98,30 @@ export default function MyApp() {
     setShowLogin(false);
     setShowDash(false);
     setShowRegister(true);
+    setShowCheckout(false);
+  };
+  const handleManagerLogin = () => {
+    const email = document.querySelector('input[name="manager-email"]').value;
+    const password = document.querySelector('input[name="manager-password"]').value;
+
+    fetch('/api/managerLogin', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.error) {
+          alert(data.error);
+        } else {
+          alert('Manager login successful');
+          setManagerLoggedIn(true);
+          runShowManager(); // Navigate to the manager dashboard
+        }
+      })
+      .catch((err) => console.error('Error during manager login:', err));
   };
 
   const runShowManager = () => {
@@ -99,6 +130,20 @@ export default function MyApp() {
     setShowDash(false);
     setShowRegister(false);
     setShowManager(true);
+    setShowCheckout(false);
+    setOrders(null);
+
+    fetch('/api/managerViewOrders')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.error) {
+          console.error('Error fetching orders:', data.error);
+          alert('Failed to fetch orders. Please try again.');
+        } else {
+          setOrders(data);
+        }
+      })
+      .catch((err) => console.error('Error fetching orders:', err));
   };
 
   const handleLogin = () => {
@@ -117,36 +162,12 @@ export default function MyApp() {
         if (data.error) {
           alert(data.error);
         } else {
-          fetch('/api/setSession', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ email }),
-          })
-            .then(() => {
-              alert('Login successful');
-              setLoggedIn(true);
-              setUsername(email);
-              runShowDash();
-            })
-            .catch((err) => console.error('Error setting session:', err));
+          setLoggedIn(true);
+          setUsername(email);
+          runShowDash();
         }
       })
       .catch((err) => console.error('Error during login:', err));
-  };
-
-  const handleLogout = () => {
-    fetch('/api/logout', {
-      method: 'POST',
-    })
-      .then(() => {
-        setLoggedIn(false);
-        setUsername('');
-        alert('Logged out successfully. See you next time!');
-        runShowFirst();
-      })
-      .catch((err) => console.error('Error logging out:', err));
   };
 
   const handleRegister = () => {
@@ -175,31 +196,49 @@ export default function MyApp() {
       .catch((err) => console.error('Error registering user:', err));
   };
 
-  const handleManagerLogin = () => {
-    const email = document.querySelector('input[name="manager-email"]').value;
-    const password = document.querySelector('input[name="manager-password"]').value;
+  const putInCart = (product) => {
+    if (!loggedIn || !username) {
+      alert('Please log in to add items to the cart.');
+      return;
+    }
 
-    fetch('/api/managerLogin', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email, password }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.error) {
-          alert(data.error);
-        } else {
-          alert('Manager login successful');
-          setLoggedIn(true);
-          setUsername(email);
-          setShowManager(false);
-          runShowDash();
-        }
-      })
-      .catch((err) => console.error('Error during manager login:', err));
+    setCart((prevCart) => [...prevCart, product]); // Add product to the cart
+    setShowCheckout(true); // Navigate to checkout
   };
+
+  const handleCheckout = async () => {
+    if (cart.length === 0) {
+      alert('Your cart is empty.');
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username, // Include the username of the customer
+          items: cart, // Pass the cart items
+          total: cart.reduce((sum, item) => sum + item.price, 0), // Calculate total price
+        }),
+      });
+
+      const result = await response.json();
+      if (response.ok) {
+        alert('Checkout successful!');
+        setCart([]); // Clear the cart
+        runShowDash(); // Navigate back to the dashboard
+      } else {
+        alert(`Error: ${result.error || 'Could not complete checkout'}`);
+      }
+    } catch (error) {
+      console.error('Error during checkout:', error);
+      alert('An error occurred during checkout.');
+    }
+  };
+
 
   return (
     <Box sx={{ flexGrow: 1, backgroundColor: '#2E3B4E', color: 'lightgreen', minHeight: '100vh' }}>
@@ -222,7 +261,7 @@ export default function MyApp() {
               Login
             </Button>
           ) : (
-            <Button color="inherit" onClick={handleLogout}>
+            <Button color="inherit" onClick={() => setLoggedIn(false)}>
               Logout
             </Button>
           )}
@@ -236,13 +275,16 @@ export default function MyApp() {
       </AppBar>
 
       {showFirstPage && (
-        <Box component="section" sx={{ p: 3, border: '1px dark blue' }}>
-          <h1>Welcome to Krispy Kreme</h1>
-          <p>Indulge in the sweet world of Krispy Kreme...</p>
+        <Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
+          <Typography variant="h4">Welcome to Krispy Kreme</Typography>
+          <Typography variant="body1" sx={{ mt: 2 }}>
+            Indulge in the sweet world of Krispy Kreme...
+          </Typography>
           <StandardImageList />
         </Box>
       )}
 
+      {/* Login Page */}
       {showLogin && (
         <Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
           <h1>Login</h1>
@@ -260,67 +302,9 @@ export default function MyApp() {
         </Box>
       )}
 
-      {showManager && (
-        <Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
-          <h1>Manager Login</h1>
-          <FormControl>
-            <FormLabel>Email</FormLabel>
-            <Input name="manager-email" type="email" placeholder="manager@example.com" />
-          </FormControl>
-          <FormControl>
-            <FormLabel>Password</FormLabel>
-            <Input name="manager-password" type="password" placeholder="password" />
-          </FormControl>
-          <Button variant="contained" color="primary" sx={{ mt: 3 }} onClick={handleManagerLogin}>
-            Login
-          </Button>
-        </Box>
-      )}
-
-      {showDash && (
-        <Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
-          <h1>Dashboard</h1>
-          {username ? (
-            <Typography variant="h5">Welcome, {username}!</Typography>
-          ) : (
-            <Typography variant="h5">Welcome to the dashboard!</Typography>
-          )}
-          {weather && (
-            <Typography variant="h5">
-              Today's Temperature: {weather.temp}°C | {weather.condition}
-            </Typography>
-          )}
-          {products ? (
-            <Box>
-              {products.map((product, index) => (
-                <Box key={index} sx={{ p: 2, border: '1px solid white', borderRadius: '8px', mb: 2 }}>
-                  <img
-                    src={product.imageUrl}
-                    style={{
-                      width: '150px',
-                      height: '150px',
-                      objectFit: 'cover',
-                      borderRadius: '8px',
-                      marginRight: '16px',
-                    }}
-                  />
-                  <Typography variant="h6">Product Name: {product.pname}</Typography>
-                  <Typography variant="body1">Price: €{product.price}</Typography>
-                  <Button onClick={() => putInCart(product)} variant="outlined">
-                    Add to cart
-                  </Button>
-                </Box>
-              ))}
-            </Box>
-          ) : (
-            <p>Loading products...</p>
-          )}
-        </Box>
-      )}
-
       {showRegister && (
         <Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
-          <h1>Get Started</h1>
+          <h1>Register</h1>
           <FormControl>
             <FormLabel>Name</FormLabel>
             <Input name="Full Name" type="text" />
@@ -343,6 +327,96 @@ export default function MyApp() {
           </FormControl>
           <Button variant="contained" color="primary" sx={{ mt: 3 }} onClick={handleRegister}>
             Register
+          </Button>
+        </Box>
+      )}
+
+
+      {showDash && (
+        <Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
+          <h1>Dashboard</h1>
+          <Typography variant="h5">Welcome, {username}!</Typography>
+          {products && (
+            <Box>
+              {products.map((product, index) => (
+                <Box key={index} sx={{ p: 2, border: '1px solid white', mb: 2 }}>
+                  <Typography variant="h6">{product.pname}</Typography>
+                  <Typography variant="body1">Price: €{product.price}</Typography>
+                  <Button onClick={() => putInCart(product)} variant="outlined">
+                    Add to cart
+                  </Button>
+                </Box>
+              ))}
+            </Box>
+          )}
+        </Box>
+      )}
+
+      {showManager && !managerLoggedIn && (
+        <Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
+          <h1>Manager Login</h1>
+          <FormControl>
+            <FormLabel>Email</FormLabel>
+            <Input name="manager-email" type="email" placeholder="manager@example.com" />
+          </FormControl>
+          <FormControl>
+            <FormLabel>Password</FormLabel>
+            <Input name="manager-password" type="password" placeholder="password" />
+          </FormControl>
+          <Button variant="contained" color="primary" sx={{ mt: 3 }} onClick={handleManagerLogin}>
+            Login
+          </Button>
+        </Box>
+      )}
+
+
+      {showManager && managerLoggedIn && (
+        <Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
+          <h1>Manager Dashboard</h1>
+          {orders && orders.length > 0 ? (
+            <Box>
+              {orders.map((order, index) => (
+                <Box
+                  key={index}
+                  sx={{
+                    p: 2,
+                    border: '1px solid lightgreen',
+                    borderRadius: '8px',
+                    mb: 2,
+                    backgroundColor: '#2E3B4E',
+                  }}
+                >
+                  <Typography variant="h6">Order ID: {order._id}</Typography>
+                  <Typography variant="body1">Customer: {order.username}</Typography>
+                  <Typography variant="body1">Total: €{order.total}</Typography>
+                  <Typography variant="body2">
+                    Items: {order.items.map((item) => item.pname).join(', ')}
+                  </Typography>
+                </Box>
+              ))}
+            </Box>
+          ) : (
+            <Typography>No orders found.</Typography>
+          )}
+        </Box>
+      )}
+
+
+      {showCheckout && (
+        <Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
+          <h1>Checkout</h1>
+          {cart.length > 0 ? (
+            cart.map((item, index) => (
+              <Box key={index} sx={{ p: 2, border: '1px solid lightgreen', mb: 2 }}>
+                <Typography>Product Name: {item.pname}</Typography>
+                <Typography>Price: €{item.price}</Typography>
+              </Box>
+            ))
+          ) : (
+            <Typography>No items in cart</Typography>
+          )}
+          <Button variant="contained" color="primary" onClick={handleCheckout}>
+            Confirm Purchase
           </Button>
         </Box>
       )}

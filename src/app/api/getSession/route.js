@@ -1,4 +1,4 @@
-import { withSessionRoute } from "../sessionConfig";
+import { withSessionRoute } from "../sessionConfig/route";
 
 async function handler(req, res) {
     if (req.method === "GET") {
