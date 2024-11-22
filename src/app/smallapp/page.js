@@ -46,6 +46,17 @@ export default function MyApp() {
       })
       .catch((err) => console.error('Error checking session:', err));
   }, []);
+  useEffect(() => {
+    fetch('http://localhost:3000/api/getWeather')
+
+      .then((res) => res.json())
+
+      .then((weather) => {
+
+        setWeatherData(weather)
+
+      })
+  }, [])
 
   useEffect(() => {
     if (showDash) {
@@ -71,11 +82,6 @@ export default function MyApp() {
   };
 
   const runShowDash = () => {
-    if (!loggedIn) {
-      alert('Please log in to access the customer dashboard.');
-      runShowLogin();
-      return;
-    }
     setShowFirstPage(false);
     setShowLogin(false);
     setShowDash(true);
@@ -83,6 +89,9 @@ export default function MyApp() {
     setShowManager(false);
     setShowCheckout(false);
   };
+
+
+
 
   const runShowFirst = () => {
     setShowFirstPage(true);
@@ -164,7 +173,8 @@ export default function MyApp() {
         } else {
           setLoggedIn(true);
           setUsername(email);
-          runShowDash();
+          setShowLogin(false);
+          setShowDash(true);
         }
       })
       .catch((err) => console.error('Error during login:', err));
@@ -341,6 +351,10 @@ export default function MyApp() {
               {products.map((product, index) => (
                 <Box key={index} sx={{ p: 2, border: '1px solid white', mb: 2 }}>
                   <Typography variant="h6">{product.pname}</Typography>
+                  <img src={product.imageUrl}
+                    alt={product.pname}
+                    style={{ width: '150px', height: '150px', objectFit: 'cover' }}
+                  />
                   <Typography variant="body1">Price: €{product.price}</Typography>
                   <Button onClick={() => putInCart(product)} variant="outlined">
                     Add to cart
