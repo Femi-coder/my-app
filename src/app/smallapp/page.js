@@ -28,36 +28,6 @@ export default function MyApp() {
   const [managerLoggedIn, setManagerLoggedIn] = useState(false);
   const [orders, setOrders] = useState(null);
   const [cart, setCart] = useState([]); // Cart state for checkout
-
-  // Check session on page load
-  useEffect(() => {
-    fetch('/api/getData')
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.error) {
-          console.log('No active session found');
-        } else if (data.role === 'manager') {
-          setManagerLoggedIn(true);
-          setUsername(data.email);
-        } else if (data.role === 'customer') {
-          setLoggedIn(true);
-          setUsername(data.email);
-        }
-      })
-      .catch((err) => console.error('Error checking session:', err));
-  }, []);
-  useEffect(() => {
-    fetch('http://localhost:3000/api/getWeather')
-
-      .then((res) => res.json())
-
-      .then((weather) => {
-
-        setWeatherData(weather)
-
-      })
-  }, [])
-
   useEffect(() => {
     if (showDash) {
       fetch('/api/getProducts')
@@ -84,7 +54,7 @@ export default function MyApp() {
   const runShowDash = () => {
     if (!loggedIn) {
       alert('Please log in to access the customer dashboard.');
-      runShowDash();
+      runShowLogin();
       return;
     } else {
       setShowFirstPage(false);
@@ -130,7 +100,7 @@ export default function MyApp() {
         } else {
           alert('Manager login successful');
           setManagerLoggedIn(true);
-          runShowManager(); // Navigate to the manager dashboard
+          runShowManager(); // Navigates to the manager dashboard
         }
       })
       .catch((err) => console.error('Error during manager login:', err));
@@ -231,8 +201,8 @@ export default function MyApp() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          username, // Include the username of the customer
-          items: cart, // Pass the cart items
+          username,
+          items: cart,
           total: cart.reduce((sum, item) => sum + item.price, 0), // Calculate total price
         }),
       });
@@ -241,7 +211,7 @@ export default function MyApp() {
       if (response.ok) {
         alert('Checkout successful!');
         setCart([]); // Clear the cart
-        runShowDash(); // Navigate back to the dashboard
+        runShowFirst(); // Navigates back to the dashboard
       } else {
         alert(`Error: ${result.error || 'Could not complete checkout'}`);
       }
@@ -278,7 +248,7 @@ export default function MyApp() {
             </Button>
           )}
           <Button color="inherit" onClick={runShowDash}>
-            Customer
+            Dashboard
           </Button>
           <Button color="inherit" onClick={runShowManager}>
             Manager
@@ -316,7 +286,7 @@ export default function MyApp() {
 
       {showRegister && (
         <Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
-          <h1>Register</h1>
+          <h1>Register to create an account</h1>
           <FormControl>
             <FormLabel>Name</FormLabel>
             <Input name="Full Name" type="text" />
@@ -348,6 +318,11 @@ export default function MyApp() {
         <Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
           <h1>Dashboard</h1>
           <Typography variant="h5">Welcome, {username}!</Typography>
+          {weather && (
+            <Typography variant="h5">
+              Today's Temperature: {weather.temp}°C | {weather.condition}
+            </Typography>
+          )}
           {products && (
             <Box>
               {products.map((product, index) => (
@@ -440,6 +415,11 @@ export default function MyApp() {
               <Box key={index} sx={{ p: 2, border: '1px solid lightgreen', mb: 2 }}>
                 <Typography>Product Name: {item.pname}</Typography>
                 <Typography>Price: €{item.price.toFixed(2)}</Typography>
+                <img
+                  src={item.imageUrl}
+                  alt={item.pname}
+                  style={{ width: '100px', height: '100px', objectFit: 'cover' }}
+                />
               </Box>
             ))
           ) : (
