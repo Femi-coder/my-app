@@ -12,6 +12,12 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import StandardImageList from './projectimages';
+import Drawer from '@mui/material/Drawer';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemText from '@mui/material/ListItemText';
+
 import { useState, useEffect } from 'react';
 
 export default function MyApp() {
@@ -28,6 +34,7 @@ export default function MyApp() {
   const [managerLoggedIn, setManagerLoggedIn] = useState(false);
   const [orders, setOrders] = useState(null);
   const [cart, setCart] = useState([]);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   useEffect(() => {
     if (showDash) {
       fetch('/api/getProducts')
@@ -191,6 +198,12 @@ export default function MyApp() {
     setCart((prevCart) => [...prevCart, product]); // Add product to the cart
     setShowCheckout(true); // Navigate to checkout
   };
+  const toggleDrawer = (open) => (event) => {
+    if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+      return;
+    }
+    setDrawerOpen(open);
+  };
 
   const handleCheckout = async () => {
     if (cart.length === 0) {
@@ -230,7 +243,7 @@ export default function MyApp() {
     <Box sx={{ flexGrow: 1, backgroundColor: '#2E3B4E', color: 'lightgreen', minHeight: '100vh' }}>
       <AppBar position="static" sx={{ backgroundColor: 'lightgreen' }}>
         <Toolbar>
-          <IconButton size="large" edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }}>
+          <IconButton size="large" edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }} onClick={toggleDrawer(true)}>
             <MenuIcon />
           </IconButton>
           <Typography variant="h2" component="div" sx={{ flexGrow: 1 }}>
@@ -269,6 +282,43 @@ export default function MyApp() {
           </Button>
         </Toolbar>
       </AppBar>
+      {/* Drawer for Hamburger Menu */}
+      <Drawer anchor="left" open={drawerOpen} onClose={toggleDrawer(false)}>
+        <Box
+          sx={{ width: 250, backgroundColor: '#2E3B4E', height: '100%', color: 'white' }}
+          role="presentation"
+          onClick={toggleDrawer(false)}
+          onKeyDown={toggleDrawer(false)}
+        >
+          <List>
+            <ListItem disablePadding>
+              <ListItemButton onClick={runShowFirst}>
+                <ListItemText primary="Index" />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding>
+              <ListItemButton onClick={runShowRegister}>
+                <ListItemText primary="Register" />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding>
+              <ListItemButton onClick={runShowLogin}>
+                <ListItemText primary="Login" />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding>
+              <ListItemButton onClick={runShowDash}>
+                <ListItemText primary="Dashboard" />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding>
+              <ListItemButton onClick={runShowManager}>
+                <ListItemText primary="Manager" />
+              </ListItemButton>
+            </ListItem>
+          </List>
+        </Box>
+      </Drawer>
 
       {showFirstPage && (
         <Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
@@ -277,8 +327,26 @@ export default function MyApp() {
             Indulge in the sweet world of Krispy Kreme...
           </Typography>
           <StandardImageList />
+
+          <Button
+            variant="contained"
+            color="primary"
+            sx={{
+              position: 'relative',
+              top: '5px',
+              px: 2,
+              py: 1.5,
+              backgroundColor: 'lightgreen',
+              ':hover': { backgroundColor: '' },
+            }}
+            onClick={runShowRegister}
+          >
+            Get Started With Us
+          </Button>
+
         </Box>
       )}
+
 
       {/* Login Page */}
       {showLogin && (
@@ -397,7 +465,7 @@ export default function MyApp() {
                     Items: {order.items.map((item) => item.pname).join(', ')}
                   </Typography>
                   <Typography variant="body2">
-                    Date: {new Date(order.timestamp).toLocaleString()}
+                    Date: {new Date(order.timestamp).toLocaleString()} {/* Format timestamp */}
                   </Typography>
                 </Box>
               ))}
