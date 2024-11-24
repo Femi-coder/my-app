@@ -27,7 +27,7 @@ export default function MyApp() {
   const [username, setUsername] = useState('');
   const [managerLoggedIn, setManagerLoggedIn] = useState(false);
   const [orders, setOrders] = useState(null);
-  const [cart, setCart] = useState([]); // Cart state for checkout
+  const [cart, setCart] = useState([]);
   useEffect(() => {
     if (showDash) {
       fetch('/api/getProducts')
@@ -99,6 +99,8 @@ export default function MyApp() {
           alert(data.error);
         } else {
           alert('Manager login successful');
+          setUsername('');
+          setCart([]);
           setManagerLoggedIn(true);
           runShowManager(); // Navigates to the manager dashboard
         }
@@ -144,6 +146,8 @@ export default function MyApp() {
         if (data.error) {
           alert(data.error);
         } else {
+          alert('User login successful');
+          setManagerLoggedIn(false);
           setLoggedIn(true);
           setUsername(email);
           setShowDash(true);
@@ -243,7 +247,17 @@ export default function MyApp() {
               Login
             </Button>
           ) : (
-            <Button color="inherit" onClick={() => setLoggedIn(false)}>
+            <Button
+              color="inherit"
+              onClick={() => {
+                setLoggedIn(false);
+                setUsername('');
+                setCart([]); // Clear the cart for the user
+                setShowFirstPage(true);
+                console.log('Successfully logged out'); // This logs the message in the console
+                alert('Successfully logged out'); // This shows a popup message to the user
+              }}
+            >
               Logout
             </Button>
           )}
@@ -382,6 +396,9 @@ export default function MyApp() {
                   <Typography variant="body2">
                     Items: {order.items.map((item) => item.pname).join(', ')}
                   </Typography>
+                  <Typography variant="body2">
+                    Date: {new Date(order.timestamp).toLocaleString()}
+                  </Typography>
                 </Box>
               ))}
 
@@ -413,13 +430,14 @@ export default function MyApp() {
           {cart.length > 0 ? (
             cart.map((item, index) => (
               <Box key={index} sx={{ p: 2, border: '1px solid lightgreen', mb: 2 }}>
-                <Typography>Product Name: {item.pname}</Typography>
-                <Typography>Price: €{item.price.toFixed(2)}</Typography>
                 <img
                   src={item.imageUrl}
                   alt={item.pname}
                   style={{ width: '100px', height: '100px', objectFit: 'cover' }}
                 />
+                <Typography variant="h6">Product Name: {item.pname}</Typography>
+                <Typography variant="h6">Price: €{item.price.toFixed(2)}</Typography>
+
               </Box>
             ))
           ) : (
