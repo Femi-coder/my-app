@@ -17,6 +17,8 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
+import Rating from '@mui/material/Rating';
+import Stack from '@mui/material/Stack';
 
 import { useState, useEffect } from 'react';
 
@@ -343,15 +345,24 @@ export default function MyApp() {
           >
             Get Started With Us
           </Button>
-
+          <Typography variant="h6" sx={{ mt: 4 }}>
+            How would you rate your experience with Krispy Kreme?
+          </Typography>
+          <Rating
+            name="index-rating"
+            value={null} // Initially null, no default rating
+            onChange={(event, newValue) => {
+              alert(`You rated us ${newValue} stars!`);
+            }}
+          />
         </Box>
+
       )}
 
 
-      {/* Login Page */}
       {showLogin && (
         <Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
-          <h1>Login</h1>
+          <h1>User Login</h1>
           <FormControl>
             <FormLabel>Email</FormLabel>
             <Input name="email" type="email" placeholder="johndoe@email.com" />
