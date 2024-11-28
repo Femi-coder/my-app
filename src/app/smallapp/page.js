@@ -242,7 +242,19 @@ export default function MyApp() {
 
 
   return (
-    <Box sx={{ flexGrow: 1, backgroundColor: '#2E3B4E', color: 'lightgreen', minHeight: '100vh' }}>
+    <Box sx={{
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      width: '100vw',
+      height: '100vh',
+      backgroundColor: '#2E3B4E',
+      color: 'lightgreen',
+      overflow: 'hidden',
+      display: 'flex',
+      flexDirection: 'column',
+    }}
+    >
       <AppBar position="static" sx={{ backgroundColor: 'lightgreen' }}>
         <Toolbar>
           <IconButton size="large" edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }} onClick={toggleDrawer(true)}>
@@ -324,8 +336,8 @@ export default function MyApp() {
 
       {showFirstPage && (
         <Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
-          <Typography variant="h4">Welcome to Krispy Kreme</Typography>
-          <Typography variant="body1" sx={{ mt: 2 }}>
+          <Typography variant="h1" color='blue'>Welcome to Krispy Kreme</Typography>
+          <Typography variant="h1" color='blue' sx={{ mt: 2 }}>
             Indulge in the sweet world of Krispy Kreme...
           </Typography>
           <StandardImageList />
@@ -345,188 +357,201 @@ export default function MyApp() {
           >
             Get Started With Us
           </Button>
-          <Typography variant="h6" sx={{ mt: 4 }}>
+          <Typography variant="h1" color='blue' sx={{ mt: 4 }}>
             How would you rate your experience with Krispy Kreme?
           </Typography>
           <Rating
             name="index-rating"
-            value={null} // Initially null, no default rating
+            value={null}
             onChange={(event, newValue) => {
               alert(`You rated us ${newValue} stars!`);
             }}
           />
         </Box>
 
-      )}
+      )
+      }
 
 
-      {showLogin && (
-        <Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
-          <h1>User Login</h1>
-          <FormControl>
-            <FormLabel>Email</FormLabel>
-            <Input name="email" type="email" placeholder="johndoe@email.com" />
-          </FormControl>
-          <FormControl>
-            <FormLabel>Password</FormLabel>
-            <Input name="password" type="password" placeholder="password" />
-          </FormControl>
-          <Button variant="contained" color="primary" sx={{ mt: 3 }} onClick={handleLogin}>
-            Login
-          </Button>
-        </Box>
-      )}
+      {
+        showLogin && (
+          <Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
+            <h1>User Login</h1>
+            <FormControl>
+              <FormLabel>Email</FormLabel>
+              <Input name="email" type="email" placeholder="johndoe@email.com" />
+            </FormControl>
+            <FormControl>
+              <FormLabel>Password</FormLabel>
+              <Input name="password" type="password" placeholder="password" />
+            </FormControl>
+            <Button variant="contained" color="primary" sx={{ mt: 3 }} onClick={handleLogin}>
+              Login
+            </Button>
+          </Box>
+        )
+      }
 
-      {showRegister && (
-        <Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
-          <h1>Register to create an account</h1>
-          <FormControl>
-            <FormLabel>Name</FormLabel>
-            <Input name="Full Name" type="text" />
-          </FormControl>
-          <FormControl>
-            <FormLabel>Address</FormLabel>
-            <Input name="address" type="text" />
-          </FormControl>
-          <FormControl>
-            <FormLabel>Email</FormLabel>
-            <Input name="email" type="email" />
-          </FormControl>
-          <FormControl>
-            <FormLabel>Password</FormLabel>
-            <Input name="password" type="password" />
-          </FormControl>
-          <FormControl>
-            <FormLabel>Confirm Password</FormLabel>
-            <Input name="confirm-password" type="password" />
-          </FormControl>
-          <Button variant="contained" color="primary" sx={{ mt: 3 }} onClick={handleRegister}>
-            Register
-          </Button>
-        </Box>
-      )}
+      {
+        showRegister && (
+          <Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
+            <h1>Register to create an account</h1>
+            <FormControl>
+              <FormLabel>Name</FormLabel>
+              <Input name="Full Name" type="text" />
+            </FormControl>
+            <FormControl>
+              <FormLabel>Address</FormLabel>
+              <Input name="address" type="text" />
+            </FormControl>
+            <FormControl>
+              <FormLabel>Email</FormLabel>
+              <Input name="email" type="email" />
+            </FormControl>
+            <FormControl>
+              <FormLabel>Password</FormLabel>
+              <Input name="password" type="password" />
+            </FormControl>
+            <FormControl>
+              <FormLabel>Confirm Password</FormLabel>
+              <Input name="confirm-password" type="password" />
+            </FormControl>
+            <Button variant="contained" color="primary" sx={{ mt: 3 }} onClick={handleRegister}>
+              Register
+            </Button>
+          </Box>
+        )
+      }
 
 
-      {showDash && (
-        <Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
-          <h1>Dashboard</h1>
-          <Typography variant="h5">Welcome, {username}!</Typography>
-          {weather && (
-            <Typography variant="h5">
-              Today's Temperature: {weather.temp}°C | {weather.condition}
-            </Typography>
-          )}
-          {products && (
-            <Box>
-              {products.map((product, index) => (
-                <Box key={index} sx={{ p: 2, border: '1px solid white', mb: 2 }}>
-                  <Typography variant="h6">{product.pname}</Typography>
-                  <img src={product.imageUrl}
-                    alt={product.pname}
-                    style={{ width: '150px', height: '150px', objectFit: 'cover' }}
-                  />
-                  <Typography variant="body1">Price: €{product.price}</Typography>
-                  <Button onClick={() => putInCart(product)} variant="outlined">
-                    Add to cart
-                  </Button>
-                </Box>
-              ))}
-            </Box>
-          )}
-        </Box>
-      )}
-      {showManager && !managerLoggedIn && (
-        <Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
-          <h1>Manager Login</h1>
-          <FormControl>
-            <FormLabel>Email</FormLabel>
-            <Input name="manager-email" type="email" placeholder="manager@example.com" />
-          </FormControl>
-          <FormControl>
-            <FormLabel>Password</FormLabel>
-            <Input name="manager-password" type="password" placeholder="password" />
-          </FormControl>
-          <Button variant="contained" color="primary" sx={{ mt: 3 }} onClick={handleManagerLogin}>
-            Login
-          </Button>
-        </Box>
-      )}
+      {
+        showDash && (
+          <Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
+            <h1>Dashboard</h1>
+            <Typography variant="h5">Welcome, {username}!</Typography>
+            {weather && (
+              <Typography variant="h5">
+                Today's Temperature: {weather.temp}°C | {weather.condition}
+              </Typography>
+            )}
+            {products && (
+              <Box>
+                {products.map((product, index) => (
+                  <Box key={index} sx={{ p: 2, border: '1px solid white', mb: 2 }}>
+                    <Typography variant="h6">{product.pname}</Typography>
+                    <img src={product.imageUrl}
+                      alt={product.pname}
+                      style={{ width: '150px', height: '150px', objectFit: 'cover' }}
+                    />
+                    <Typography variant="body1">Price: €{product.price}</Typography>
+                    <Button onClick={() => putInCart(product)} variant="outlined">
+                      Add to cart
+                    </Button>
+                  </Box>
+                ))}
+              </Box>
+            )}
+          </Box>
+        )
+      }
+      {
+        showManager && !managerLoggedIn && (
+          <Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
+            <h1>Manager Login</h1>
+            <FormControl>
+              <FormLabel>Email</FormLabel>
+              <Input name="manager-email" type="email" placeholder="manager@example.com" />
+            </FormControl>
+            <FormControl>
+              <FormLabel>Password</FormLabel>
+              <Input name="manager-password" type="password" placeholder="password" />
+            </FormControl>
+            <Button variant="contained" color="primary" sx={{ mt: 3 }} onClick={handleManagerLogin}>
+              Login
+            </Button>
+          </Box>
+        )
+      }
 
-      {showManager && managerLoggedIn && (
-        <Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
-          <h1>Manager Dashboard</h1>
-          {orders && orders.length > 0 ? (
-            <Box>
-              {/* List all orders */}
-              {orders.map((order, index) => (
+      {
+        showManager && managerLoggedIn && (
+          <Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
+            <h1>Manager Dashboard</h1>
+            {orders && orders.length > 0 ? (
+              <Box>
+                {/* List all orders */}
+                {orders.map((order, index) => (
+                  <Box
+                    key={index}
+                    sx={{
+                      p: 2,
+                      border: '1px solid lightgreen',
+                      borderRadius: '8px',
+                      mb: 2,
+                      backgroundColor: '#2E3B4E',
+                    }}
+                  >
+                    <Typography variant="h6">Order ID: {order._id}</Typography>
+                    <Typography variant="body1">Customer: {order.username}</Typography>
+                    <Typography variant="body1">Total: €{order.total}</Typography>
+                    <Typography variant="body2">
+                      Items: {order.items.map((item) => item.pname).join(', ')}
+                    </Typography>
+                    <Typography variant="body2">
+                      Date: {new Date(order.timestamp).toLocaleString()} {/* Format timestamp */}
+                    </Typography>
+                  </Box>
+                ))}
+
+                {/* Total Orders and Revenue */}
                 <Box
-                  key={index}
                   sx={{
+                    mt: 3,
                     p: 2,
                     border: '1px solid lightgreen',
-                    borderRadius: '8px',
-                    mb: 2,
                     backgroundColor: '#2E3B4E',
+                    borderRadius: '8px',
                   }}
                 >
-                  <Typography variant="h6">Order ID: {order._id}</Typography>
-                  <Typography variant="body1">Customer: {order.username}</Typography>
-                  <Typography variant="body1">Total: €{order.total}</Typography>
-                  <Typography variant="body2">
-                    Items: {order.items.map((item) => item.pname).join(', ')}
-                  </Typography>
-                  <Typography variant="body2">
-                    Date: {new Date(order.timestamp).toLocaleString()} {/* Format timestamp */}
+                  <Typography variant="h5">Total Orders: {orders.length}</Typography>
+                  <Typography variant="h5">
+                    Total Revenue: €{orders.reduce((sum, order) => sum + order.total, 0).toFixed(2)}
                   </Typography>
                 </Box>
-              ))}
-
-              {/* Total Orders and Revenue */}
-              <Box
-                sx={{
-                  mt: 3,
-                  p: 2,
-                  border: '1px solid lightgreen',
-                  backgroundColor: '#2E3B4E',
-                  borderRadius: '8px',
-                }}
-              >
-                <Typography variant="h5">Total Orders: {orders.length}</Typography>
-                <Typography variant="h5">
-                  Total Revenue: €{orders.reduce((sum, order) => sum + order.total, 0).toFixed(2)}
-                </Typography>
               </Box>
-            </Box>
-          ) : (
-            <Typography>No orders found.</Typography>
-          )}
-        </Box>
-      )}
+            ) : (
+              <Typography>No orders found.</Typography>
+            )}
+          </Box>
+        )
+      }
 
-      {showCheckout && (
-        <Box component="section" sx={{ p: 2 }}>
-          <Typography variant="h4">Checkout</Typography>
-          {cart.length > 0 ? (
-            cart.map((item, index) => (
-              <Box key={index} sx={{ p: 2, border: '1px solid lightgreen', mb: 2 }}>
-                <img
-                  src={item.imageUrl}
-                  alt={item.pname}
-                  style={{ width: '100px', height: '100px', objectFit: 'cover' }}
-                />
-                <Typography variant="h6">Product Name: {item.pname}</Typography>
-                <Typography variant="h6">Price: €{item.price.toFixed(2)}</Typography>
+      {
+        showCheckout && (
+          <Box component="section" sx={{ p: 2 }}>
+            <Typography variant="h4">Checkout</Typography>
+            {cart.length > 0 ? (
+              cart.map((item, index) => (
+                <Box key={index} sx={{ p: 2, border: '1px solid lightgreen', mb: 2 }}>
+                  <img
+                    src={item.imageUrl}
+                    alt={item.pname}
+                    style={{ width: '100px', height: '100px', objectFit: 'cover' }}
+                  />
+                  <Typography variant="h6">Product Name: {item.pname}</Typography>
+                  <Typography variant="h6">Price: €{item.price.toFixed(2)}</Typography>
 
-              </Box>
-            ))
-          ) : (
-            <Typography>No items in cart</Typography>
-          )}
-          <Button variant="contained" color="primary" onClick={handleCheckout}>
-            Confirm Purchase
-          </Button>
-        </Box>
-      )}
-    </Box>
+                </Box>
+              ))
+            ) : (
+              <Typography>No items in cart</Typography>
+            )}
+            <Button variant="contained" color="primary" onClick={handleCheckout}>
+              Confirm Purchase
+            </Button>
+          </Box>
+        )
+      }
+    </Box >
   );
 }
